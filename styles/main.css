@@ -803,10 +803,15 @@ a:hover {
 }
 
 .account-type-btn span {
+  color: var(--text-secondary);
   display: block;
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: var(--spacing-xs);
+}
+
+.account-type-btn:hover span {
+ color: var(--text-light);
 }
 
 .account-type-btn p {
