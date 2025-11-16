@@ -66,7 +66,26 @@
                                 <option value="today">Сьогодні</option>
                                 <option value="week">Цей тиждень</option>
                                 <option value="month">Цей місяць</option>
-                                <option value="future">Майбутні</option>
+                                <option value="future">Майбутні події</option>
+                                <option value="past">Минулі події</option>
+                                <option value="this_week">Події цього тижня</option>
+                                <option value="this_month">Події цього місяця</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Формат:</label>
+                            <select id="formatFilter">
+                                <option value="">Всі формати</option>
+                                <option value="offline">Офлайн</option>
+                                <option value="online">Онлайн</option>
+                                <option value="hybrid">Гібридний</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Терміновість:</label>
+                            <select id="urgentFilter">
+                                <option value="">Всі</option>
+                                <option value="true">Тільки термінові</option>
                             </select>
                         </div>
                         <div class="filter-group">
@@ -111,6 +130,10 @@
                                     <option value="date-asc">Найстаріші</option>
                                     <option value="title-asc">Назва (А-Я)</option>
                                     <option value="title-desc">Назва (Я-А)</option>
+                                    <option value="event-date-asc">Дата події (спочатку ранні)</option>
+                                    <option value="event-date-desc">Дата події (спочатку пізні)</option>
+                                    <option value="urgent-first">Спочатку термінові</option>
+                                    <option value="views-desc">За популярністю</option>
                                 </select>
                             </div>
                             <a href="create-announcement.html" class="btn btn-primary" id="createAnnouncementBtn" style="display: none;">
@@ -149,6 +172,8 @@
         </div>
     </footer>
 
+    <script src="init-data.js"></script>
+    <script src="scripts/data-api.js"></script>
     <script src="scripts/main.js"></script>
     <script src="scripts/auth.js"></script>
     <script src="scripts/announcements.js"></script>

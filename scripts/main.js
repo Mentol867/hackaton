@@ -150,6 +150,10 @@ class Utils {
 
     // Get category display name
     static getCategoryDisplayName(category) {
+        if (window.dataAPI) {
+            return window.dataAPI.getCategoryDisplayName(category);
+        }
+        // Fallback for when dataAPI is not available
         const categories = {
             'lecture': 'Лекція',
             'seminar': 'Семінар',
@@ -164,6 +168,10 @@ class Utils {
 
     // Get industry display name
     static getIndustryDisplayName(industry) {
+        if (window.dataAPI) {
+            return window.dataAPI.getIndustryDisplayName(industry);
+        }
+        // Fallback for when dataAPI is not available
         const industries = {
             'it': 'Інформаційні технології',
             'finance': 'Фінанси та банківська справа',
@@ -180,6 +188,10 @@ class Utils {
 
     // Get duration display name
     static getDurationDisplayName(duration) {
+        if (window.dataAPI) {
+            return window.dataAPI.getDurationDisplayName(duration);
+        }
+        // Fallback for when dataAPI is not available
         const durations = {
             '30min': '30 хвилин',
             '1hour': '1 година',
@@ -195,12 +207,33 @@ class Utils {
 
     // Get format display name
     static getFormatDisplayName(format) {
+        if (window.dataAPI) {
+            return window.dataAPI.getFormatDisplayName(format);
+        }
+        // Fallback for when dataAPI is not available
         const formats = {
             'offline': 'Офлайн',
             'online': 'Онлайн',
             'hybrid': 'Гібридний'
         };
         return formats[format] || format;
+    }
+
+    // Get setting value
+    static getSetting(key) {
+        if (window.dataAPI) {
+            return window.dataAPI.getSetting(key);
+        }
+        // Fallback settings
+        const defaultSettings = {
+            maxAnnouncementTitleLength: 100,
+            maxAnnouncementDescriptionLength: 1000,
+            maxRequirementsLength: 500,
+            autoSaveInterval: 30000,
+            itemsPerPage: 12,
+            notificationDuration: 5000
+        };
+        return defaultSettings[key];
     }
 }
 
@@ -498,14 +531,24 @@ class SearchFilterManager {
     filterItem(item, key, value) {
         switch (key) {
             case 'search':
-                return item.title.toLowerCase().includes(value.toLowerCase()) ||
-                       item.description.toLowerCase().includes(value.toLowerCase());
+                const searchTerm = value.toLowerCase();
+                return item.title.toLowerCase().includes(searchTerm) ||
+                       item.description.toLowerCase().includes(searchTerm) ||
+                       (item.location && item.location.toLowerCase().includes(searchTerm)) ||
+                       (item.requirements && item.requirements.toLowerCase().includes(searchTerm)) ||
+                       (item.targetAudience && item.targetAudience.toLowerCase().includes(searchTerm));
             case 'category':
                 return item.category === value;
             case 'organization':
                 return item.organizationType === value;
             case 'date':
                 return this.filterByDate(item, value);
+            case 'format':
+                return item.format === value;
+            case 'urgent':
+                return value === 'true' ? item.urgent === true : true;
+            case 'location':
+                return item.location && item.location.toLowerCase().includes(value.toLowerCase());
             default:
                 return true;
         }
@@ -526,6 +569,23 @@ class SearchFilterManager {
                 return itemDate >= monthAgo;
             case 'future':
                 return item.eventDate && new Date(item.eventDate) > now;
+            case 'past':
+                return item.eventDate && new Date(item.eventDate) < now;
+            case 'this_week':
+                if (!item.eventDate) return false;
+                const eventDate = new Date(item.eventDate);
+                const startOfWeek = new Date(now);
+                startOfWeek.setDate(now.getDate() - now.getDay());
+                startOfWeek.setHours(0, 0, 0, 0);
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(startOfWeek.getDate() + 6);
+                endOfWeek.setHours(23, 59, 59, 999);
+                return eventDate >= startOfWeek && eventDate <= endOfWeek;
+            case 'this_month':
+                if (!item.eventDate) return false;
+                const eventMonth = new Date(item.eventDate);
+                return eventMonth.getMonth() === now.getMonth() &&
+                       eventMonth.getFullYear() === now.getFullYear();
             default:
                 return true;
         }
@@ -541,6 +601,22 @@ class SearchFilterManager {
                 return a.title.localeCompare(b.title, 'uk');
             case 'title-desc':
                 return b.title.localeCompare(a.title, 'uk');
+            case 'event-date-asc':
+                if (!a.eventDate && !b.eventDate) return 0;
+                if (!a.eventDate) return 1;
+                if (!b.eventDate) return -1;
+                return new Date(a.eventDate) - new Date(b.eventDate);
+            case 'event-date-desc':
+                if (!a.eventDate && !b.eventDate) return 0;
+                if (!a.eventDate) return 1;
+                if (!b.eventDate) return -1;
+                return new Date(b.eventDate) - new Date(a.eventDate);
+            case 'urgent-first':
+                if (a.urgent && !b.urgent) return -1;
+                if (!a.urgent && b.urgent) return 1;
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            case 'views-desc':
+                return (b.viewCount || 0) - (a.viewCount || 0);
             default:
                 return 0;
         }

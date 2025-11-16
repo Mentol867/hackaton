@@ -3,26 +3,41 @@
 
 class AuthManager {
     constructor() {
-        this.users = this.loadUsers();
+        this.users = [];
         this.currentUser = this.loadCurrentUser();
         this.init();
     }
 
-    init() {
+    async init() {
+        // Load users from JSON file
+        await this.loadUsers();
+        
         // Initialize sample data if no users exist
         if (this.users.length === 0) {
-            this.initializeSampleData();
+            await this.initializeSampleData();
         }
     }
 
     // ===== DATA MANAGEMENT =====
-    loadUsers() {
-        const users = localStorage.getItem('users');
-        return users ? JSON.parse(users) : [];
+    async loadUsers() {
+        try {
+            this.users = await dataAPI.loadUsers();
+            return this.users;
+        } catch (error) {
+            console.error('Error loading users:', error);
+            this.users = [];
+            return this.users;
+        }
     }
 
-    saveUsers() {
-        localStorage.setItem('users', JSON.stringify(this.users));
+    async saveUsers() {
+        try {
+            const result = await dataAPI.saveUsers(this.users);
+            return result;
+        } catch (error) {
+            console.error('Error saving users:', error);
+            return { success: false, message: 'Помилка збереження користувачів' };
+        }
     }
 
     loadCurrentUser() {
@@ -71,7 +86,11 @@ class AuthManager {
 
             // Add to users array
             this.users.push(newUser);
-            this.saveUsers();
+            const saveResult = await this.saveUsers();
+            
+            if (!saveResult.success) {
+                throw new Error(saveResult.message);
+            }
 
             return {
                 success: true,
@@ -108,7 +127,7 @@ class AuthManager {
 
             // Update last login
             user.lastLogin = new Date().toISOString();
-            this.saveUsers();
+            await this.saveUsers();
 
             // Save current user
             const sanitizedUser = this.sanitizeUser(user);
@@ -172,7 +191,11 @@ class AuthManager {
                 updatedAt: new Date().toISOString()
             };
 
-            this.saveUsers();
+            const saveResult = await this.saveUsers();
+            
+            if (!saveResult.success) {
+                throw new Error(saveResult.message);
+            }
 
             // Update current user if it's the same user
             if (this.currentUser && this.currentUser.id === userId) {
@@ -214,7 +237,11 @@ class AuthManager {
             // Update password
             user.password = this.hashPassword(newPassword);
             user.updatedAt = new Date().toISOString();
-            this.saveUsers();
+            const saveResult = await this.saveUsers();
+            
+            if (!saveResult.success) {
+                throw new Error(saveResult.message);
+            }
 
             return {
                 success: true,
@@ -380,157 +407,155 @@ class AuthManager {
     }
 
     // ===== SAMPLE DATA INITIALIZATION =====
-    initializeSampleData() {
-        const sampleUsers = [
-            {
-                id: 'univ1',
-                type: 'university',
-                universityName: 'Київський національний університет імені Тараса Шевченка',
-                email: 'info@knu.ua',
-                phone: '+380442393111',
-                address: 'вул. Володимирська, 60, Київ, 01033',
-                website: 'https://knu.ua',
-                description: 'Провідний класичний університет України, заснований у 1834 році. Готуємо фахівців за широким спектром спеціальностей.',
-                contactPerson: 'Іванов Іван Іванович',
-                password: this.hashPassword('password123'),
-                createdAt: new Date().toISOString(),
-                isActive: true,
-                emailVerified: true,
-                lastLogin: null
-            },
-            {
-                id: 'comp1',
-                type: 'company',
-                companyName: 'TechUkraine',
-                email: 'hr@techukraine.com',
-                phone: '+380443334455',
-                address: 'вул. Хрещатик, 22, Київ, 01001',
-                website: 'https://techukraine.com',
-                industry: 'it',
-                description: 'Провідна IT-компанія України, що спеціалізується на розробці програмного забезпечення та цифрових рішень.',
-                contactPerson: 'Петренко Марія Олександрівна',
-                password: this.hashPassword('password123'),
-                createdAt: new Date().toISOString(),
-                isActive: true,
-                emailVerified: true,
-                lastLogin: null
-            },
-            {
-                id: 'univ2',
-                type: 'university',
-                universityName: 'Національний технічний університет України "КПІ"',
-                email: 'info@kpi.ua',
-                phone: '+380442048888',
-                address: 'просп. Перемоги, 37, Київ, 03056',
-                website: 'https://kpi.ua',
-                description: 'Провідний технічний університет України, готує інженерів та IT-фахівців світового рівня.',
-                contactPerson: 'Сидоренко Олег Петрович',
-                password: this.hashPassword('password123'),
-                createdAt: new Date().toISOString(),
-                isActive: true,
-                emailVerified: true,
-                lastLogin: null
-            }
-        ];
-
-        this.users = sampleUsers;
-        this.saveUsers();
+    async initializeSampleData() {
+        // Sample data is now loaded from JSON files
+        // This method is kept for backward compatibility
+        console.log('Sample data loaded from JSON files');
+        return { success: true, message: 'Зразкові дані завантажено з JSON файлів' };
     }
 }
 
 // ===== DATA STORAGE MANAGER =====
 class DataManager {
     constructor() {
-        this.announcements = this.loadAnnouncements();
+        this.announcements = [];
         this.init();
     }
 
-    init() {
+    async init() {
+        // Load announcements from JSON file
+        await this.loadAnnouncements();
+        
         // Initialize sample announcements if none exist
         if (this.announcements.length === 0) {
-            this.initializeSampleAnnouncements();
+            await this.initializeSampleAnnouncements();
         }
     }
 
     // ===== ANNOUNCEMENTS MANAGEMENT =====
-    loadAnnouncements() {
-        const announcements = localStorage.getItem('announcements');
-        return announcements ? JSON.parse(announcements) : [];
+    async loadAnnouncements() {
+        try {
+            this.announcements = await dataAPI.loadAnnouncements();
+            return this.announcements;
+        } catch (error) {
+            console.error('Error loading announcements:', error);
+            this.announcements = [];
+            return this.announcements;
+        }
     }
 
-    saveAnnouncements() {
-        localStorage.setItem('announcements', JSON.stringify(this.announcements));
+    async saveAnnouncements() {
+        try {
+            const result = await dataAPI.saveAnnouncements(this.announcements);
+            return result;
+        } catch (error) {
+            console.error('Error saving announcements:', error);
+            return { success: false, message: 'Помилка збереження оголошень' };
+        }
     }
 
-    createAnnouncement(announcementData) {
-        const newAnnouncement = {
-            id: Utils.generateId(),
-            ...announcementData,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            isActive: true,
-            viewCount: 0,
-            status: 'active'
-        };
+    async createAnnouncement(announcementData) {
+        try {
+            const newAnnouncement = {
+                id: Utils.generateId(),
+                ...announcementData,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                isActive: true,
+                viewCount: 0,
+                status: 'active'
+            };
 
-        this.announcements.push(newAnnouncement);
-        this.saveAnnouncements();
+            this.announcements.push(newAnnouncement);
+            const saveResult = await this.saveAnnouncements();
+            
+            if (!saveResult.success) {
+                throw new Error(saveResult.message);
+            }
 
-        return {
-            success: true,
-            message: 'Оголошення успішно створено',
-            announcement: newAnnouncement
-        };
-    }
-
-    updateAnnouncement(id, updateData) {
-        const index = this.announcements.findIndex(a => a.id === id);
-        if (index === -1) {
+            return {
+                success: true,
+                message: 'Оголошення успішно створено',
+                announcement: newAnnouncement
+            };
+        } catch (error) {
             return {
                 success: false,
-                message: 'Оголошення не знайдено'
+                message: error.message
             };
         }
-
-        this.announcements[index] = {
-            ...this.announcements[index],
-            ...updateData,
-            updatedAt: new Date().toISOString()
-        };
-
-        this.saveAnnouncements();
-
-        return {
-            success: true,
-            message: 'Оголошення успішно оновлено',
-            announcement: this.announcements[index]
-        };
     }
 
-    deleteAnnouncement(id) {
-        const index = this.announcements.findIndex(a => a.id === id);
-        if (index === -1) {
+    async updateAnnouncement(id, updateData) {
+        try {
+            const index = this.announcements.findIndex(a => a.id === id);
+            if (index === -1) {
+                return {
+                    success: false,
+                    message: 'Оголошення не знайдено'
+                };
+            }
+
+            this.announcements[index] = {
+                ...this.announcements[index],
+                ...updateData,
+                updatedAt: new Date().toISOString()
+            };
+
+            const saveResult = await this.saveAnnouncements();
+            
+            if (!saveResult.success) {
+                throw new Error(saveResult.message);
+            }
+
+            return {
+                success: true,
+                message: 'Оголошення успішно оновлено',
+                announcement: this.announcements[index]
+            };
+        } catch (error) {
             return {
                 success: false,
-                message: 'Оголошення не знайдено'
+                message: error.message
             };
         }
-
-        this.announcements.splice(index, 1);
-        this.saveAnnouncements();
-
-        return {
-            success: true,
-            message: 'Оголошення успішно видалено'
-        };
     }
 
-    getAnnouncementById(id) {
+    async deleteAnnouncement(id) {
+        try {
+            const index = this.announcements.findIndex(a => a.id === id);
+            if (index === -1) {
+                return {
+                    success: false,
+                    message: 'Оголошення не знайдено'
+                };
+            }
+
+            this.announcements.splice(index, 1);
+            const saveResult = await this.saveAnnouncements();
+            
+            if (!saveResult.success) {
+                throw new Error(saveResult.message);
+            }
+
+            return {
+                success: true,
+                message: 'Оголошення успішно видалено'
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message
+            };
+        }
+    }
+
+    async getAnnouncementById(id) {
         const announcement = this.announcements.find(a => a.id === id);
         if (announcement) {
             // Increment view count
             announcement.viewCount = (announcement.viewCount || 0) + 1;
-            this.saveAnnouncements();
+            await this.saveAnnouncements();
         }
         return announcement;
     }
@@ -575,90 +600,30 @@ class DataManager {
     }
 
     // ===== SAMPLE DATA =====
-    initializeSampleAnnouncements() {
-        const sampleAnnouncements = [
-            {
-                id: 'ann1',
-                title: 'Лекція з штучного інтелекту для студентів',
-                category: 'lecture',
-                description: 'Запрошуємо експертів з галузі штучного інтелекту для проведення лекції для студентів комп\'ютерних наук. Розглянемо сучасні тенденції в машинному навчанні та практичні застосування AI.',
-                authorId: 'univ1',
-                organizationType: 'university',
-                eventDate: '2024-12-15',
-                eventTime: '14:00',
-                duration: '2hours',
-                location: 'Аудиторія 101, головний корпус',
-                format: 'offline',
-                targetAudience: 'Студенти 3-4 курсів спеціальності "Комп\'ютерні науки"',
-                requirements: 'Досвід роботи з AI/ML мінімум 3 роки, публікації в галузі',
-                compensation: 'Гонорар 5000 грн, сертифікат лектора',
-                contactEmail: 'ai.lectures@knu.ua',
-                contactPhone: '+380442393111',
-                urgent: true,
-                createdAt: '2024-11-10T10:00:00.000Z',
-                updatedAt: '2024-11-10T10:00:00.000Z',
-                isActive: true,
-                viewCount: 45,
-                status: 'active'
-            },
-            {
-                id: 'ann2',
-                title: 'Пошук університету для проведення воркшопу з кібербезпеки',
-                category: 'workshop',
-                description: 'Наша компанія шукає партнера-університет для проведення практичного воркшопу з кібербезпеки. Маємо досвідчених спеціалістів та готові поділитися знаннями зі студентами.',
-                authorId: 'comp1',
-                organizationType: 'company',
-                eventDate: '2024-12-20',
-                eventTime: '10:00',
-                duration: 'halfday',
-                location: 'Буде узгоджено з університетом',
-                format: 'hybrid',
-                targetAudience: 'Студенти IT-спеціальностей, викладачі',
-                requirements: 'Наявність комп\'ютерного класу, проектор, інтернет',
-                compensation: 'Безкоштовно, сертифікати учасникам',
-                contactEmail: 'workshops@techukraine.com',
-                contactPhone: '+380443334455',
-                urgent: false,
-                createdAt: '2024-11-12T09:30:00.000Z',
-                updatedAt: '2024-11-12T09:30:00.000Z',
-                isActive: true,
-                viewCount: 32,
-                status: 'active'
-            },
-            {
-                id: 'ann3',
-                title: 'Семінар з інноваційних технологій в освіті',
-                category: 'seminar',
-                description: 'КПІ організовує семінар для представників IT-компаній щодо впровадження інноваційних технологій в освітній процес. Обговоримо можливості співпраці та спільні проекти.',
-                authorId: 'univ2',
-                organizationType: 'university',
-                eventDate: '2024-12-10',
-                eventTime: '15:30',
-                duration: '3hours',
-                location: 'Конференц-зал, корпус №7',
-                format: 'offline',
-                targetAudience: 'Представники IT-компаній, стартапів',
-                requirements: 'Досвід роботи в IT-галузі, інтерес до освітніх технологій',
-                compensation: 'Нетворкінг, можливості для партнерства',
-                contactEmail: 'innovation@kpi.ua',
-                contactPhone: '+380442048888',
-                urgent: false,
-                createdAt: '2024-11-08T14:15:00.000Z',
-                updatedAt: '2024-11-08T14:15:00.000Z',
-                isActive: true,
-                viewCount: 28,
-                status: 'active'
-            }
-        ];
-
-        this.announcements = sampleAnnouncements;
-        this.saveAnnouncements();
+    async initializeSampleAnnouncements() {
+        // Sample data is now loaded from JSON files
+        // This method is kept for backward compatibility
+        console.log('Sample announcements loaded from JSON files');
+        return { success: true, message: 'Зразкові оголошення завантажено з JSON файлів' };
     }
 }
 
 // ===== GLOBAL INSTANCES =====
-window.authManager = new AuthManager();
-window.dataManager = new DataManager();
+// Initialize managers after DataAPI is ready
+document.addEventListener('DOMContentLoaded', async () => {
+    // Wait for DataAPI to initialize
+    if (window.dataAPI) {
+        await window.dataAPI.init();
+    }
+    
+    // Initialize managers
+    window.authManager = new AuthManager();
+    window.dataManager = new DataManager();
+    
+    // Wait for managers to initialize
+    await window.authManager.init();
+    await window.dataManager.init();
+});
 
 // ===== EXPORT FOR OTHER SCRIPTS =====
 window.AuthManager = AuthManager;

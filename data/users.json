@@ -1,0 +1,53 @@
+{
+  "users": [
+    {
+      "id": "univ1",
+      "type": "university",
+      "universityName": "Київський національний університет імені Тараса Шевченка",
+      "email": "info@knu.ua",
+      "phone": "+380442393111",
+      "address": "вул. Володимирська, 60, Київ, 01033",
+      "website": "https://knu.ua",
+      "description": "Провідний класичний університет України, заснований у 1834 році. Готуємо фахівців за широким спектром спеціальностей.",
+      "contactPerson": "Іванов Іван Іванович",
+      "password": "cGFzc3dvcmQxMjNzYWx0MTIz",
+      "createdAt": "2024-11-01T10:00:00.000Z",
+      "isActive": true,
+      "emailVerified": true,
+      "lastLogin": null
+    },
+    {
+      "id": "comp1",
+      "type": "company",
+      "companyName": "TechUkraine",
+      "email": "hr@techukraine.com",
+      "phone": "+380443334455",
+      "address": "вул. Хрещатик, 22, Київ, 01001",
+      "website": "https://techukraine.com",
+      "industry": "it",
+      "description": "Провідна IT-компанія України, що спеціалізується на розробці програмного забезпечення та цифрових рішень.",
+      "contactPerson": "Петренко Марія Олександрівна",
+      "password": "cGFzc3dvcmQxMjNzYWx0MTIz",
+      "createdAt": "2024-11-01T10:00:00.000Z",
+      "isActive": true,
+      "emailVerified": true,
+      "lastLogin": null
+    },
+    {
+      "id": "univ2",
+      "type": "university",
+      "universityName": "Національний технічний університет України \"КПІ\"",
+      "email": "info@kpi.ua",
+      "phone": "+380442048888",
+      "address": "просп. Перемоги, 37, Київ, 03056",
+      "website": "https://kpi.ua",
+      "description": "Провідний технічний університет України, готує інженерів та IT-фахівців світового рівня.",
+      "contactPerson": "Сидоренко Олег Петрович",
+      "password": "cGFzc3dvcmQxMjNzYWx0MTIz",
+      "createdAt": "2024-11-01T10:00:00.000Z",
+      "isActive": true,
+      "emailVerified": true,
+      "lastLogin": null
+    }
+  ]
+}

@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadAnnouncement(announcementId) {
     try {
-        const announcement = dataManager.getAnnouncementById(announcementId);
+        const announcement = await dataManager.getAnnouncementById(announcementId);
         
         if (!announcement) {
             throw new Error('Оголошення не знайдено');

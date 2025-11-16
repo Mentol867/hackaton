@@ -154,12 +154,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let result;
             if (isEditMode) {
-                result = dataManager.updateAnnouncement(editingAnnouncementId, formData);
+                result = await dataManager.updateAnnouncement(editingAnnouncementId, formData);
             } else {
                 // Add author information
                 formData.authorId = authManager.currentUser.id;
                 formData.organizationType = authManager.currentUser.type;
-                result = dataManager.createAnnouncement(formData);
+                result = await dataManager.createAnnouncement(formData);
             }
 
             if (result.success) {
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.authorId = authManager.currentUser.id;
             formData.organizationType = authManager.currentUser.type;
 
-            const result = dataManager.createAnnouncement(formData);
+            const result = await dataManager.createAnnouncement(formData);
 
             if (result.success) {
                 Utils.showNotification('Чернетку збережено', 'success');
@@ -409,17 +409,21 @@ document.addEventListener('DOMContentLoaded', () => {
             errors.push('Опис є обов\'язковим');
         }
 
-        // Length validations
-        if (data.title && data.title.length > 100) {
-            errors.push('Заголовок не може перевищувати 100 символів');
+        // Length validations using settings from config
+        const maxTitleLength = Utils.getSetting('maxAnnouncementTitleLength') || 100;
+        const maxDescriptionLength = Utils.getSetting('maxAnnouncementDescriptionLength') || 1000;
+        const maxRequirementsLength = Utils.getSetting('maxRequirementsLength') || 500;
+
+        if (data.title && data.title.length > maxTitleLength) {
+            errors.push(`Заголовок не може перевищувати ${maxTitleLength} символів`);
         }
 
-        if (data.description && data.description.length > 1000) {
-            errors.push('Опис не може перевищувати 1000 символів');
+        if (data.description && data.description.length > maxDescriptionLength) {
+            errors.push(`Опис не може перевищувати ${maxDescriptionLength} символів`);
         }
 
-        if (data.requirements && data.requirements.length > 500) {
-            errors.push('Вимоги не можуть перевищувати 500 символів');
+        if (data.requirements && data.requirements.length > maxRequirementsLength) {
+            errors.push(`Вимоги не можуть перевищувати ${maxRequirementsLength} символів`);
         }
 
         // Email validation

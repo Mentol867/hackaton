@@ -55,6 +55,22 @@ class AnnouncementsManager extends SearchFilterManager {
             });
         }
 
+        // Format filter
+        const formatFilter = document.getElementById('formatFilter');
+        if (formatFilter) {
+            formatFilter.addEventListener('change', (e) => {
+                this.setFilter('format', e.target.value);
+            });
+        }
+
+        // Urgent filter
+        const urgentFilter = document.getElementById('urgentFilter');
+        if (urgentFilter) {
+            urgentFilter.addEventListener('change', (e) => {
+                this.setFilter('urgent', e.target.value);
+            });
+        }
+
         // Apply filters button
         const applyFiltersBtn = document.getElementById('applyFilters');
         if (applyFiltersBtn) {
@@ -87,11 +103,15 @@ class AnnouncementsManager extends SearchFilterManager {
         const categoryFilter = document.getElementById('categoryFilter');
         const dateFilter = document.getElementById('dateFilter');
         const searchFilter = document.getElementById('searchFilter');
+        const formatFilter = document.getElementById('formatFilter');
+        const urgentFilter = document.getElementById('urgentFilter');
 
         if (orgFilter) orgFilter.value = '';
         if (categoryFilter) categoryFilter.value = '';
         if (dateFilter) dateFilter.value = '';
         if (searchFilter) searchFilter.value = '';
+        if (formatFilter) formatFilter.value = '';
+        if (urgentFilter) urgentFilter.value = '';
 
         // Clear filters
         this.currentFilters = {};
@@ -346,7 +366,7 @@ class AnnouncementsManager extends SearchFilterManager {
         const confirmed = confirm('Ви впевнені, що хочете видалити це оголошення?');
         if (!confirmed) return;
         
-        const result = dataManager.deleteAnnouncement(announcementId);
+        const result = await dataManager.deleteAnnouncement(announcementId);
         
         if (result.success) {
             Utils.showNotification(result.message, 'success');
@@ -378,7 +398,22 @@ class AnnouncementsManager extends SearchFilterManager {
     }
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize when DOM is loaded and dataManager is ready
+document.addEventListener('DOMContentLoaded', async () => {
+    // Wait for dataManager to be initialized
+    const waitForDataManager = () => {
+        return new Promise((resolve) => {
+            const checkDataManager = () => {
+                if (window.dataManager && window.dataManager.announcements !== undefined) {
+                    resolve();
+                } else {
+                    setTimeout(checkDataManager, 100);
+                }
+            };
+            checkDataManager();
+        });
+    };
+
+    await waitForDataManager();
     new AnnouncementsManager();
 });
