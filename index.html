@@ -37,39 +37,17 @@
                 <p>Знаходьте можливості для проведення лекцій, семінарів та інших освітніх заходів</p>
                 <div class="">
                 <!-- <div class="hero-buttons"> -->
-                    <a href="register.html" class="btn btn-primary">Приєднатися</a>
+                    <script>
+
+                    </script>
+                    <a href="register.html" id="connect" class="btn btn-primary">Приєднатися</a>
                     <a href="announcements.html" class="btn btn-secondary">Переглянути оголошення</a>
                 </div>
             </div>
 
             <div class="content-wrapper">
                 <aside class="sidebar">
-                    <div class="sidebar-section">
-                        <h3>Фільтри</h3>
-                        <div class="filter-group">
-                            <label>Тип організації:</label>
-                            <select id="organizationFilter">
-                                <option value="">Всі</option>
-                                <option value="university">Університети</option>
-                                <option value="company">Компанії</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Категорія:</label>
-                            <select id="categoryFilter">
-                                <option value="">Всі категорії</option>
-                                <option value="lecture">Лекції</option>
-                                <option value="seminar">Семінари</option>
-                                <option value="workshop">Майстер-класи</option>
-                                <option value="conference">Конференції</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Пошук:</label>
-                            <input type="text" id="searchFilter" placeholder="Введіть ключові слова...">
-                        </div>
-                        <button class="btn btn-primary" id="applyFilters">Застосувати фільтри</button>
-                    </div>
+             
 
                     <div class="sidebar-section">
                         <h3>Статистика</h3>
@@ -131,7 +109,7 @@
             
             // Load and display statistics
             const stats = dataManager.getStatistics();
-            
+            console.log(stats)
             // Update statistics display
             const totalAnnouncementsEl = document.getElementById('totalAnnouncements');
             const totalUniversitiesEl = document.getElementById('totalUniversities');

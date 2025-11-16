@@ -272,6 +272,7 @@ class AuthManager {
     }
 
     getUniversities() {
+        ///console.log(this.users)
         return this.users
             .filter(user => user.type === 'university')
             .map(user => this.sanitizeUser(user));
@@ -579,7 +580,10 @@ class DataManager {
 
     // ===== STATISTICS =====
     getStatistics() {
-        const authManager = new AuthManager();
+        const authManager = window.authManager;
+        //console.log(this)
+        //console.log(authManager)
+        
         const totalAnnouncements = this.announcements.length;
         const activeAnnouncements = this.getActiveAnnouncements().length;
         const totalUniversities = authManager.getUniversities().length;

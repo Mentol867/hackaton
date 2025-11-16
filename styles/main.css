@@ -1355,7 +1355,7 @@ a:hover {
 }
 
 .settings-section:last-child {
-  border-bottom: none;
+ 
   margin-bottom: 0;
 }
 
@@ -1425,14 +1425,21 @@ a:hover {
 }
 
 .urgent {
+  
   background-color: var(--warning-color);
-  color: var(--text-light);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-sm);
-  font-size: 0.8rem;
+  color: rgb(211, 0, 0);
+
+  border-radius: var(--radius-lg);
+  font-size: 0.9rem;
   font-weight: 600;
 }
-
+.urgent div,button{
+  color: white;
+    line-height: 1.7;
+}
+.urgent .action-btn, .urgent .date{
+  color: white;
+}
 .announcement-description h3,
 .announcement-details h3,
 .announcement-requirements h3,

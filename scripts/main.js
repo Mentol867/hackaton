@@ -11,9 +11,10 @@ class ThemeManager {
         // Get saved theme or default to light
         const savedTheme = localStorage.getItem('theme') || 'light';
         this.setTheme(savedTheme);
-        
+       
         // Setup theme toggle button
         this.setupThemeToggle();
+        
     }
 
     setTheme(theme) {
@@ -56,6 +57,29 @@ class Utils {
         return new Date(date).toLocaleDateString('uk-UA', { ...defaultOptions, ...options });
     }
 
+
+
+    updateStatistics() {
+        const stats = dataManager.getStatistics();
+        
+        console.log(stats)
+
+        const totalAnnouncementsEl = document.getElementById('totalAnnouncements');
+        const activeAnnouncementsEl = document.getElementById('totalUniversities');
+        const todayAnnouncementsEl = document.getElementById('todayAnnouncements');
+        
+        if (totalAnnouncementsEl) {
+            totalAnnouncementsEl.textContent = stats.totalAnnouncements;
+        }
+        
+        if (activeAnnouncementsEl) {
+            activeAnnouncementsEl.textContent = stats.activeAnnouncements;
+        }
+        
+        if (todayAnnouncementsEl) {
+            todayAnnouncementsEl.textContent = stats.todayAnnouncements;
+        }
+    }
     // Format time to Ukrainian locale
     static formatTime(time) {
         return new Date(`2000-01-01T${time}`).toLocaleTimeString('uk-UA', {
@@ -449,13 +473,14 @@ class NavigationManager {
         const registerLink = document.getElementById('registerLink');
         const logoutBtn = document.getElementById('logoutBtn');
         const createAnnouncementBtn = document.getElementById('createAnnouncementBtn');
-
+        const connectBtn = document.getElementById('connect');
         if (currentUser) {
             // User is logged in
             if (loginLink) loginLink.style.display = 'none';
             if (registerLink) registerLink.style.display = 'none';
             if (logoutBtn) logoutBtn.style.display = 'block';
             if (createAnnouncementBtn) createAnnouncementBtn.style.display = 'flex';
+            if (connectBtn) connectBtn.style.display = 'none';
         } else {
             // User is not logged in
             if (loginLink) loginLink.style.display = 'block';
@@ -724,7 +749,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modals.forEach(modal => {
         ModalManager.setupModal(modal.id);
     });
-    
+
     // Add smooth scrolling to anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
